@@ -169,6 +169,13 @@ class ProxyView(BaseProxyView):
                         timeout=self.proxy_settings.TIMEOUT,
                         verify=verify_ssl)
             else:
+                if 'application/json' in headers['Content-Type']:
+                    import json
+                    try:
+                        data = json.dumps(data)
+                    except:
+                        data = {}
+
                 response = requests.request(request.method, url,
                         params=params,
                         data=data,
@@ -176,12 +183,14 @@ class ProxyView(BaseProxyView):
                         headers=headers,
                         timeout=self.proxy_settings.TIMEOUT,
                         verify=verify_ssl)
+
         except (ConnectionError, SSLError):
             status = requests.status_codes.codes.bad_gateway
             return self.create_error_response({
                 'code': status,
                 'error': 'Bad gateway',
             }, status)
+
         except (Timeout):
             status = requests.status_codes.codes.gateway_timeout
             return self.create_error_response({
