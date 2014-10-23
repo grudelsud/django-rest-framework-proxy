@@ -51,7 +51,7 @@ class ProxyView(BaseProxyView):
     def get_request_data(self, request):
         data = {}
         if request.DATA:
-            data.update(request.DATA.dict())
+            data.update(request.DATA)
         return data
 
     def get_request_files(self, request):
